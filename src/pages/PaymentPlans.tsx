@@ -50,34 +50,37 @@ export default function PaymentPlans(): JSX.Element {
   const stored = typeof window !== "undefined" ? sessionStorage.getItem("loanApplication") : null;
   const storedJson = stored ? JSON.parse(stored) : null;
 
+  // Accept loan amount from navigation state (Payment flow) or fallback to stored values
   const navLoanAmount = state?.loanAmount ?? state?.requiredLoanAmount ?? null;
   const navUser = state?.user ?? null;
 
   const salaryFromState = navUser?.salary ?? navUser?.metadata?.salary ?? null;
+
   const requestedLoanRaw = Number(navLoanAmount ?? storedJson?.requiredLoanAmount ?? storedJson?.metadata?.requiredLoanAmount ?? 0);
   const salaryRaw = Number(salaryFromState ?? storedJson?.metadata?.salary ?? 0);
   const employment = (navUser?.employment ?? storedJson?.metadata?.employment ?? navUser?.employment ?? storedJson?.user?.employment) as Employment;
 
   const maxLoan = useMemo(() => {
     const s = Number(salaryRaw || 0);
-    const emp = (employment || "").toString();
-    if (emp === "Student") {
+    const emp = (employment || "").toString().trim();
+    if (emp.toLowerCase() === "student") {
       if (!s || s === 0) return 5000;
       return 2 * s;
     }
-    if (emp === "Self-employed" || emp === "Self employed" || emp === "Self Employed") {
+    if (emp.toLowerCase().includes("self")) {
       return 3 * s;
     }
-    if (emp === "Salaried Employee" || emp === "Salaried") {
+    if (emp.toLowerCase().includes("salaried")) {
       return 5 * s;
     }
-    if (emp === "Unemployed" || emp === "Unemployeed" || emp === "Unemployed") {
+    if (emp.toLowerCase().includes("unemploy")) {
       return 50000;
     }
     return 50000;
   }, [employment, salaryRaw]);
 
   const requestedAmount = Math.max(0, Math.round(requestedLoanRaw || 0));
+  // principal = the amount that will be shown in plans (min(requested, maxLoan))
   const principal = Math.min(requestedAmount || maxLoan, maxLoan);
   const limitExceeded = requestedAmount > maxLoan;
 
@@ -93,12 +96,12 @@ export default function PaymentPlans(): JSX.Element {
     };
   });
 
-  // pick a recommended plan (example: mid-length or lowest EMI interest tradeoff).
-  // Here we recommend 12 or 24 months if available; fallback to longest.
-  const recommendedMonths = plans.some(p => p.months === 12) ? 12 : plans[plans.length - 1].months;
+  // Recommended plan selection heuristic
+  const recommendedMonths = plans.some((p) => p.months === 12) ? 12 : plans[plans.length - 1].months;
 
   function handleSelectPlan(planMonths: number) {
     const selected = plans.find((pl) => pl.months === planMonths);
+    // persist selected plan with loanAmount so downstream pages can read it reliably
     sessionStorage.setItem(
       "selectedPlan",
       JSON.stringify({
@@ -110,7 +113,15 @@ export default function PaymentPlans(): JSX.Element {
       })
     );
 
-    navigate("/terms", { state: { plan: selected, principal, user: navUser ?? storedJson?.user } });
+    // also persist sanctioned/approved amount for global access
+    try {
+      sessionStorage.setItem("sanctionedAmount", String(principal));
+    } catch (err) {
+      // ignore storage errors in prototype
+    }
+
+    // Navigate to terms page — include loanAmount explicitly in state
+    navigate("/terms", { state: { plan: selected, loanAmount: principal, user: navUser ?? storedJson?.user } });
   }
 
   return (
@@ -124,13 +135,18 @@ export default function PaymentPlans(): JSX.Element {
         <div className="flex items-center gap-4">
           <div className="text-sm text-slate-500">You requested</div>
           <div className="bg-white border px-4 py-2 rounded-lg shadow-sm">
-            <div className="text-sm text-slate-500">Requested</div>
+            <div className="text-xs text-slate-500">Requested</div>
             <div className="font-semibold text-lg">{formatCurrency(requestedAmount)}</div>
           </div>
 
           <div className="bg-white border px-4 py-2 rounded-lg shadow-sm">
-            <div className="text-sm text-slate-500">Eligible limit</div>
+            <div className="text-xs text-slate-500">Eligible limit</div>
             <div className="font-semibold text-lg">{formatCurrency(maxLoan)}</div>
+          </div>
+
+          <div className="bg-white border px-4 py-2 rounded-lg shadow-sm">
+            <div className="text-xs text-slate-500">Sanctioned</div>
+            <div className="font-semibold text-lg">{formatCurrency(principal)}</div>
           </div>
         </div>
       </header>
