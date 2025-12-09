@@ -1,0 +1,1 @@
+This is loan bot ,made for ey techathon 6.0
