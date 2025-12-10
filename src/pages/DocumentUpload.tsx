@@ -164,7 +164,7 @@ export default function DocumentUpload(): JSX.Element {
         <div className="text-center">
           <div className="mb-4 animate-spin inline-block w-12 h-12 border-4 rounded-full border-t-transparent" />
           <h3 className="text-xl font-semibold">KYC is being processed</h3>
-          <p className="text-sm text-muted-foreground mt-2">This will take about 3 seconds for the prototype.</p>
+          <p className="text-sm text-muted-foreground mt-2">This won't take long.</p>
         </div>
       </div>
     );

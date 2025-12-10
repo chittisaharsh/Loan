@@ -290,7 +290,7 @@ export default function ApplyForm(): JSX.Element {
               value={form.loanPurpose}
               onChange={(e) => updateField("loanPurpose", e.target.value)}
               className="mt-1 block w-full rounded border px-3 py-2"
-              placeholder="e.g. Home improvement, education, business capital"
+              placeholder="e.g. Home loan, education, business capital"
             />
             <FieldError name="loanPurpose" />
           </div>

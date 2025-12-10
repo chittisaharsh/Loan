@@ -45,7 +45,7 @@ export function Hero({ onStartChat }: HeroProps) {
           {/* Heading */}
           <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight slide-up">
             Get Your Personal Loan
-            <span className="block text-primary">In Minutes, Not Days</span>
+            <span className="block text-primary">In Minutes, Not Months</span>
           </h1>
 
           {/* Subheading */}

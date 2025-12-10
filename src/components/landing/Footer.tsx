@@ -46,22 +46,22 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-background/70">
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
-                <span>1800-XXX-XXXX</span>
+                <span>+91 8767796764</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4" />
-                <span>support@quickloan.com</span>
+                <span>chittisaharsh1705@gmail.com</span>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 mt-0.5" />
-                <span>123 Financial District, Mumbai, Maharashtra 400001</span>
+                <span>Jspm's Rscoe, Pune, Maharashtra 411033</span>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-background/20 text-center text-sm text-background/50">
-          <p>© 2024 QuickLoan NBFC Ltd. All rights reserved. CIN: XXXXXXXXXXXXX | RBI Reg No: XXXXXXXXX</p>
+          <p>© 2024 Intellicia NBFC Ltd. All rights reserved.</p>
         </div>
       </div>
     </footer>
